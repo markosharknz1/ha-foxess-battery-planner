@@ -1,0 +1,169 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "FoxESS Battery Planner",
+        "description": "Your FoxESS Cloud Open API key (foxesscloud.com > User Profile > API Management) and the inverter serial number. The key is stored in Home Assistant, not in any YAML file.",
+        "data": {
+          "name": "Name",
+          "slug": "Entity prefix (optional)",
+          "api_key": "FoxESS API key",
+          "device_sn": "Inverter serial number"
+        },
+        "data_description": {
+          "slug": "Lowercase letters, digits and underscores. Derived from the name if left empty."
+        }
+      },
+      "sources": {
+        "title": "Battery and solar data",
+        "description": "Pick the sensors the planner reads. Add one forecast sensor per array if you have several; they are summed. Wh, kWh and MWh sensors are converted automatically. See docs/FORECAST_SOURCES.md for the supported integrations.",
+        "data": {
+          "soc_entity": "Battery state of charge sensor (%)",
+          "forecast_entities": "Solar forecast for today (kWh/Wh sensors)",
+          "weather_entity": "Weather entity (fallback)",
+          "array_kwp": "Array size for weather fallback (kWp)",
+          "clear_sky_yield": "Clear-sky yield (kWh per kWp per day)"
+        },
+        "data_description": {
+          "weather_entity": "Used only when no forecast sensor is readable. Estimates solar from cloud cover.",
+          "clear_sky_yield": "Typical full-sun daily output per kWp. Around 4.5 is a cautious default."
+        }
+      },
+      "schedule": {
+        "title": "Charge windows",
+        "description": "Times when the battery may charge from the grid. Up to three windows; the planner works out one target for the night and applies it to every window, so charging stops once the target is reached. Windows must not overlap or cross midnight. The charge rate is a slider on the card (kW).",
+        "data": {
+          "charge_start": "Window 1 start",
+          "charge_end": "Window 1 end",
+          "charge_start_2": "Window 2 start (optional)",
+          "charge_end_2": "Window 2 end (optional)",
+          "charge_start_3": "Window 3 start (optional)",
+          "charge_end_3": "Window 3 end (optional)",
+          "plan_lead_minutes": "Plan this many minutes before the first window",
+          "min_soc_on_grid": "Minimum SoC on grid (%)",
+          "notify": "Persistent notifications"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach FoxESS Cloud.",
+      "invalid_auth": "FoxESS rejected the API key or serial number.",
+      "invalid_slug": "Use lowercase letters, digits and underscores, starting with a letter.",
+      "need_forecast": "Choose at least one forecast sensor, or a weather entity together with an array size.",
+      "window_order": "Each window must end after it starts, on the same day.",
+      "window_incomplete": "Give both a start and an end for each window you use.",
+      "window_overlap": "Charge windows must not overlap."
+    },
+    "abort": {
+      "already_configured": "This inverter is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Battery and solar data",
+        "data": {
+          "soc_entity": "Battery state of charge sensor (%)",
+          "forecast_entities": "Solar forecast for today (kWh/Wh sensors)",
+          "weather_entity": "Weather entity (fallback)",
+          "array_kwp": "Array size for weather fallback (kWp)",
+          "clear_sky_yield": "Clear-sky yield (kWh per kWp per day)"
+        }
+      },
+      "schedule": {
+        "title": "Charge windows",
+        "data": {
+          "charge_start": "Window 1 start",
+          "charge_end": "Window 1 end",
+          "charge_start_2": "Window 2 start (optional)",
+          "charge_end_2": "Window 2 end (optional)",
+          "charge_start_3": "Window 3 start (optional)",
+          "charge_end_3": "Window 3 end (optional)",
+          "plan_lead_minutes": "Plan this many minutes before the first window",
+          "min_soc_on_grid": "Minimum SoC on grid (%)",
+          "notify": "Persistent notifications"
+        }
+      }
+    },
+    "error": {
+      "need_forecast": "Choose at least one forecast sensor, or a weather entity together with an array size.",
+      "window_order": "Each window must end after it starts, on the same day.",
+      "window_incomplete": "Give both a start and an end for each window you use.",
+      "window_overlap": "Charge windows must not overlap."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "idle": "Idle",
+          "disabled": "Disabled",
+          "not_needed": "Charge not needed",
+          "charging": "Charging from grid",
+          "complete": "Complete",
+          "dry_run": "Dry run",
+          "skipped": "Skipped",
+          "error": "Error"
+        }
+      },
+      "target_soc": {
+        "name": "Target SoC"
+      },
+      "grid_needed": {
+        "name": "Grid energy needed"
+      },
+      "forecast": {
+        "name": "Solar forecast used"
+      },
+      "last_run": {
+        "name": "Last run"
+      }
+    },
+    "number": {
+      "battery_capacity": {
+        "name": "Battery capacity"
+      },
+      "daily_usage": {
+        "name": "Daytime usage"
+      },
+      "pre_solar_load": {
+        "name": "Pre-solar load"
+      },
+      "solar_trust": {
+        "name": "Solar forecast trust"
+      },
+      "buffer": {
+        "name": "Target buffer"
+      },
+      "min_target_soc": {
+        "name": "Minimum SoC (always charge to)"
+      },
+      "max_target_soc": {
+        "name": "Maximum target SoC"
+      },
+      "charge_power_kw": {
+        "name": "Grid charge rate"
+      }
+    },
+    "switch": {
+      "enabled": {
+        "name": "Automatic planning"
+      },
+      "dry_run": {
+        "name": "Dry run (do not write to FoxESS)"
+      },
+      "ignore_tz": {
+        "name": "Ignore time zone check"
+      }
+    },
+    "button": {
+      "plan_now": {
+        "name": "Plan now"
+      },
+      "cancel": {
+        "name": "Cancel and restore schedule"
+      }
+    }
+  }
+}
